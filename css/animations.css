@@ -1,0 +1,483 @@
+/* ============================================================
+   THE ANCIENT SIGNAL — animations.css
+   ------------------------------------------------------------
+   Handles:
+     - Gentle fade-and-rise reveals (scroll-triggered)
+     - Subtle emblem motion
+     - Smooth transitions on interactive elements
+     - Restrained project-card hover effects
+     - Subtle image transitions
+     - Optional background movement
+     - Small geometric / glyph animations
+
+   Design rules:
+     - Restrained and cinematic. No neon glow, no heavy particles,
+       no constant pulsing, no distracting motion.
+     - Every decorative animation must be disabled under
+       prefers-reduced-motion: reduce, and the page must remain
+       fully functional without any motion.
+
+   Depends on:
+     - css/styles.css (Step 3.1) — tokens, base styles
+     - css/responsive.css (Step 3.2) — layout
+     - js/main.js — toggles .reveal -> .is-revealed
+     - js/gallery.js — toggles .modal (hidden attribute) open/close
+   ============================================================ */
+
+/* ============================================================
+   1. KEYFRAMES
+   ------------------------------------------------------------
+   Small, purposeful motion only. Each keyframe is used exactly
+   once, or shared intentionally across related elements.
+   ============================================================ */
+
+/* Fade and rise — used by scroll reveals. */
+@keyframes signal-fade-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Slow opacity ramp — used for the hero eyebrow. */
+@keyframes signal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Very slow drift for the background grid. */
+@keyframes signal-bg-drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(-1.5%, -1.5%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Slow rotation for the outer emblem ring only. */
+@keyframes signal-emblem-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Gentle counter-rotation for the inner ring, giving parallax. */
+@keyframes signal-emblem-rotate-reverse {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+/* A very subtle breathing on the emblem core dot. */
+@keyframes signal-emblem-core {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(0.92); }
+}
+
+/* Modal entrance. */
+@keyframes signal-modal-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes signal-modal-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* ============================================================
+   2. SCROLL-TRIGGERED REVEALS
+   ------------------------------------------------------------
+   main.js adds .reveal to targets on init, then .is-revealed
+   when they enter the viewport. Both classes are required:
+   .reveal alone does nothing visible (safe before JS runs).
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  will-change: opacity, transform;
+}
+
+.reveal.is-revealed {
+  animation: signal-fade-rise 720ms var(--ease-out) both;
+  will-change: auto;
+}
+
+/* Stagger for grids and lists — small offsets, never more than
+   ~300ms total, so the page never feels slow. */
+.project-grid .project-card:nth-child(1) { animation-delay: 0ms; }
+.project-grid .project-card:nth-child(2) { animation-delay: 40ms; }
+.project-grid .project-card:nth-child(3) { animation-delay: 80ms; }
+.project-grid .project-card:nth-child(4) { animation-delay: 120ms; }
+.project-grid .project-card:nth-child(5) { animation-delay: 160ms; }
+.project-grid .project-card:nth-child(6) { animation-delay: 200ms; }
+
+.codex .codex__group:nth-child(1) { animation-delay: 0ms; }
+.codex .codex__group:nth-child(2) { animation-delay: 50ms; }
+.codex .codex__group:nth-child(3) { animation-delay: 100ms; }
+.codex .codex__group:nth-child(4) { animation-delay: 150ms; }
+.codex .codex__group:nth-child(5) { animation-delay: 200ms; }
+.codex .codex__group:nth-child(6) { animation-delay: 250ms; }
+
+/* ============================================================
+   3. HERO ENTRANCE
+   ------------------------------------------------------------
+   A single, gentle sequence on first paint. These are time-
+   based, not scroll-based, and complete quickly.
+   ============================================================ */
+.hero__eyebrow {
+  animation: signal-fade-in 900ms var(--ease-out) both;
+}
+
+.hero__title {
+  animation: signal-fade-rise 900ms var(--ease-out) 120ms both;
+}
+
+.hero__tagline {
+  animation: signal-fade-rise 900ms var(--ease-out) 260ms both;
+}
+
+.hero__intro {
+  animation: signal-fade-rise 900ms var(--ease-out) 380ms both;
+}
+
+.hero__actions {
+  animation: signal-fade-rise 900ms var(--ease-out) 500ms both;
+}
+
+.scroll-indicator {
+  animation: signal-fade-in 1200ms var(--ease-out) 900ms both;
+}
+
+.hero__emblem {
+  animation: signal-fade-in 1400ms var(--ease-out) 200ms both;
+}
+
+/* ============================================================
+   4. EMBLEM MOTION
+   ------------------------------------------------------------
+   Slow, restrained. Only the outer ring rotates; the inner ring
+   counter-rotates. The core has a very small breathing pulse.
+   All motion is opt-in via prefers-reduced-motion below.
+   ============================================================ */
+
+/* SVG groups inside the emblem receive transforms. */
+.emblem__ring--outer {
+  transform-origin: 160px 160px;
+  animation: signal-emblem-rotate 120s linear infinite;
+}
+
+.emblem__ring--mid {
+  transform-origin: 160px 160px;
+  animation: signal-emblem-rotate-reverse 180s linear infinite;
+}
+
+.emblem__core-dot {
+  transform-origin: 160px 160px;
+  animation: signal-emblem-core 6s ease-in-out infinite;
+}
+
+/* The pale ticks and nodes stay still — motion belongs to the
+   rings only. This avoids busyness while keeping the emblem
+   alive. */
+
+/* ============================================================
+   5. BACKGROUND MOTION
+   ------------------------------------------------------------
+   An extremely slow drift on the grid. It is barely perceptible
+   and never calls attention to itself.
+   ============================================================ */
+.bg-grid {
+  animation: signal-bg-drift 90s ease-in-out infinite;
+}
+
+/* ============================================================
+   6. PROJECT CARD HOVER
+   ------------------------------------------------------------
+   Base styles.css already defines the transform (translateY)
+   and image scale. This file layers a slightly slower, more
+   cinematic easing on the image while it transitions.
+   ============================================================ */
+.project-card__cover {
+  transition:
+    transform 900ms var(--ease-out),
+    filter 500ms var(--ease-out);
+}
+
+.project-card:hover .project-card__cover,
+.project-card:focus-visible .project-card__cover {
+  filter: saturate(1.05) brightness(1.03);
+}
+
+.project-card:hover .project-card__open-hint,
+.project-card:focus-visible .project-card__open-hint {
+  letter-spacing: 0.16em;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    letter-spacing var(--dur-med) var(--ease-out);
+}
+
+/* ============================================================
+   7. NAVIGATION MICRO-MOTION
+   ============================================================ */
+
+/* A small, tracked transition on the section index number when
+   a nav link becomes active. */
+.nav-link__index {
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    letter-spacing var(--dur-med) var(--ease-out);
+}
+
+.nav-link.is-active .nav-link__index {
+  letter-spacing: 0.18em;
+}
+
+/* The active indicator bar already animates via styles.css;
+   we add a slight easing only for the mobile variant. */
+.mobile-nav__link {
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.mobile-nav__link.is-active svg {
+  transform: translateY(-1px);
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+/* ============================================================
+   8. FILTER CHIP MOTION
+   ------------------------------------------------------------
+   Chips are interactive, so their transition is functional as
+   well as aesthetic. Kept under 250ms.
+   ============================================================ */
+.filter-chip {
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.filter-chip:active {
+  transform: scale(0.97);
+}
+
+/* ============================================================
+   9. MODAL ENTRANCE
+   ------------------------------------------------------------
+   gallery.js removes the `hidden` attribute to open the modal.
+   We animate the panel and the backdrop when they first appear.
+   The exit is instant (no exit animation) — closing fast feels
+   more trustworthy than a lingering fade.
+   ============================================================ */
+.modal:not([hidden]) .modal__backdrop {
+  animation: signal-modal-fade 260ms var(--ease-out) both;
+}
+
+.modal:not([hidden]) .modal__panel {
+  animation: signal-modal-rise 380ms var(--ease-out) both;
+}
+
+/* ============================================================
+   10. GALLERY IMAGE TRANSITIONS
+   ------------------------------------------------------------
+   The stage image fades in gently on each change. gallery.js
+   updates its `src`; the animation re-runs on each assignment
+   because the browser re-evaluates the animation-name when the
+   element's animation is (re)started via a small class toggle
+   below. We add a `.is-swapping` class via CSS animation only
+   on initial mount and on image load — using `animation` on
+   `.gallery__main` is safe because it doesn't run continuously.
+   ============================================================ */
+.gallery__main {
+  animation: signal-fade-in 260ms var(--ease-out) both;
+}
+
+/* Thumbnails animate subtly when made active. */
+.gallery__thumb {
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+
+.gallery__thumb.is-active {
+  transform: translateY(-1px);
+}
+
+.gallery__thumb:hover {
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   11. CONTACT & FORM MOTION
+   ============================================================ */
+
+.contact-link {
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.contact-link:hover {
+  transform: translateY(-1px);
+}
+
+/* Inputs focus gently. */
+.field input,
+.field textarea {
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+/* ============================================================
+   12. BUTTON MOTION
+   ------------------------------------------------------------
+   Buttons scale down slightly on press; nothing more.
+   ============================================================ */
+.btn {
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* ============================================================
+   13. SYSTEM PANEL MOTION
+   ------------------------------------------------------------
+   A small slide-up + fade on open. It closes without motion,
+   which keeps the interaction feeling decisive.
+   ============================================================ */
+.system-panel:not([hidden]) {
+  animation: signal-modal-rise 260ms var(--ease-out) both;
+}
+
+/* ============================================================
+   14. SCROLL INDICATOR LINE
+   ------------------------------------------------------------
+   A single, very slow downward drift of the gradient line. No
+   bouncing, no pulsing.
+   ============================================================ */
+.scroll-indicator__line {
+  transform-origin: top center;
+  animation: signal-scroll-line 4s ease-in-out infinite;
+}
+
+@keyframes signal-scroll-line {
+  0%, 100% { transform: scaleY(1); opacity: 0.55; }
+  50%      { transform: scaleY(0.6); opacity: 0.9; }
+}
+
+/* ============================================================
+   15. REDUCED MOTION — FULL POLICY
+   ------------------------------------------------------------
+   Every animation, transition, and transform used for motion
+   above is disabled here. The page remains fully functional.
+
+   Also handles the case where main.js skipped adding .is-revealed
+   (it also checks prefers-reduced-motion), so nothing stays
+   hidden.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* Global default: no animations or transitions. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reveals become instantly visible. */
+  .reveal,
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  /* Any element that starts hidden and would rely on an
+     animation to become visible is forced visible. */
+  .hero__eyebrow,
+  .hero__title,
+  .hero__tagline,
+  .hero__intro,
+  .hero__actions,
+  .hero__emblem,
+  .scroll-indicator {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  /* Static emblem. */
+  .emblem__ring--outer,
+  .emblem__ring--mid,
+  .emblem__core-dot {
+    animation: none;
+    transform: none;
+  }
+
+  /* Static background. */
+  .bg-grid {
+    animation: none;
+    transform: none;
+  }
+
+  /* Static scroll indicator. */
+  .scroll-indicator__line {
+    animation: none;
+    transform: none;
+    opacity: 0.7;
+  }
+
+  /* Modal appears instantly. */
+  .modal:not([hidden]) .modal__backdrop,
+  .modal:not([hidden]) .modal__panel,
+  .system-panel:not([hidden]) {
+    animation: none;
+  }
+
+  /* Any hover motion is removed. */
+  .project-card:hover,
+  .project-card:focus-visible,
+  .contact-link:hover,
+  .btn:active:not(:disabled),
+  .filter-chip:active,
+  .gallery__thumb:hover,
+  .gallery__thumb.is-active,
+  .mobile-nav__link.is-active svg {
+    transform: none;
+  }
+
+  .project-card:hover .project-card__cover,
+  .project-card:focus-visible .project-card__cover {
+    transform: none;
+    filter: none;
+  }
+
+  .nav-link__index,
+  .project-card:hover .project-card__open-hint,
+  .project-card:focus-visible .project-card__open-hint {
+    letter-spacing: normal;
+  }
+}

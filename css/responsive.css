@@ -1,0 +1,726 @@
+/* ============================================================
+   THE ANCIENT SIGNAL — responsive.css
+   ------------------------------------------------------------
+   Implements responsive layouts across desktop, laptop, tablet
+   and mobile. Base styling and design tokens live in styles.css.
+
+   Breakpoints targeted:
+     - ≥1440px  Large desktop / wide
+     - ≤1280px  Desktop narrow
+     - ≤1024px  Tablet landscape / small laptop
+     - ≤768px   Tablet portrait / large phone
+     - ≤430px   Large phone
+     - ≤375px   Small phone
+     - ≤320px   Very small phone
+
+   The sidebar switches to the fixed mobile bottom navigation at
+   ≤1024px (comfortable minimum for the sidebar to remain useful).
+
+   Uses CSS Grid, Flexbox, clamp(), minmax() and aspect-ratio
+   throughout; avoids simply shrinking the desktop layout.
+   ============================================================ */
+
+/* ============================================================
+   1. LARGE DESKTOP (≥1440px)
+   ============================================================ */
+@media (min-width: 1440px) {
+  :root {
+    --sidebar-width: 288px;
+    --content-max: 1320px;
+    --content-gutter: clamp(32px, 4vw, 72px);
+  }
+
+  .hero {
+    gap: var(--space-9);
+  }
+
+  .emblem {
+    max-width: 440px;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+
+  .codex {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ============================================================
+   2. DESKTOP NARROW (≤1280px)
+   Sidebar stays, but is slightly compacted.
+   ============================================================ */
+@media (max-width: 1280px) {
+  :root {
+    --sidebar-width: 244px;
+  }
+
+  .hero {
+    gap: var(--space-7);
+  }
+
+  .emblem {
+    max-width: 340px;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* ============================================================
+   3. TABLET LANDSCAPE / SMALL LAPTOP (≤1024px)
+   ------------------------------------------------------------
+   Sidebar is hidden. Fixed mobile bottom navigation is shown.
+   Main content flows full-width. Project grid collapses to two
+   columns; details and galleries stack appropriately.
+   ============================================================ */
+@media (max-width: 1024px) {
+  /* --- Navigation swap --- */
+  .sidebar {
+    display: none !important;
+  }
+
+  .mobile-nav {
+    display: block;
+    /* Ensure touch targets meet 48px minimum and use safe-area. */
+    padding:
+      var(--space-2)
+      max(var(--space-3), env(safe-area-inset-left, 0px))
+      calc(var(--space-2) + env(safe-area-inset-bottom, 0px))
+      max(var(--space-3), env(safe-area-inset-right, 0px));
+  }
+
+  /* System panel becomes a small centered popover. */
+  .system-panel {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(var(--mobile-nav-height) + var(--space-5));
+    width: min(360px, calc(100vw - var(--space-6) * 2));
+  }
+
+  /* --- Layout --- */
+  .main {
+    margin-left: 0;
+    padding-bottom: calc(
+      var(--mobile-nav-height) +
+      var(--space-7) +
+      env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .section {
+    padding: var(--space-8) 0;
+  }
+
+  .section__inner {
+    padding-left: max(var(--content-gutter), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--content-gutter), env(safe-area-inset-right, 0px));
+  }
+
+  /* Anchor scrolling must clear the fixed bottom nav. */
+  html {
+    scroll-padding-top: var(--space-5);
+    scroll-padding-bottom: calc(
+      var(--mobile-nav-height) +
+      var(--space-5) +
+      env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  /* --- Hero --- */
+  .section--hero {
+    min-height: auto;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+    text-align: left;
+  }
+
+  .hero__emblem {
+    order: -1;
+    justify-content: flex-start;
+  }
+
+  .emblem {
+    max-width: 260px;
+  }
+
+  .hero__title {
+    font-size: clamp(2.25rem, 7vw, 3.5rem);
+  }
+
+  /* --- Origin --- */
+  .origin {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  .origin__profile {
+    position: static;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+  }
+
+  .profile-frame {
+    width: 200px;
+    flex: 0 0 auto;
+  }
+
+  .origin__id {
+    flex: 1 1 240px;
+    min-width: 220px;
+  }
+
+  .origin__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  /* --- Codex --- */
+  .codex {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  /* --- Archive --- */
+  .archive__controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .archive__search {
+    max-width: none;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  /* --- Transmission --- */
+  .transmission {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .contact-form {
+    padding: var(--space-5);
+  }
+
+  /* --- Modal --- */
+  .modal {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .modal__panel {
+    max-width: none;
+    max-height: none;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .modal__scroll {
+    max-height: none;
+    height: 100%;
+    padding:
+      var(--space-6)
+      max(var(--space-5), env(safe-area-inset-left, 0px))
+      calc(var(--mobile-nav-height) + var(--space-6))
+      max(var(--space-5), env(safe-area-inset-right, 0px));
+  }
+
+  .modal__close {
+    position: sticky;
+    top: 0;
+    float: right;
+    margin-bottom: var(--space-3);
+  }
+
+  .modal__header {
+    padding-right: 0;
+  }
+
+  .modal__layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .modal__title {
+    font-size: var(--fs-xl);
+  }
+
+  /* --- Gallery --- */
+  .gallery__nav {
+    width: 44px;
+    height: 44px;
+  }
+
+  .gallery__thumb {
+    width: 64px;
+    height: 46px;
+  }
+}
+
+/* ============================================================
+   4. TABLET PORTRAIT / LARGE PHONE (≤768px)
+   ------------------------------------------------------------
+   Project grid becomes a single column. Typography tightens.
+   Bottom nav labels remain; icons remain large.
+   ============================================================ */
+@media (max-width: 768px) {
+  :root {
+    --content-gutter: clamp(18px, 5vw, 32px);
+    --space-7: 40px;
+    --space-8: 56px;
+    --space-9: 72px;
+  }
+
+  .section {
+    padding: var(--space-7) 0;
+  }
+
+  .section__header {
+    margin-bottom: var(--space-6);
+  }
+
+  .section__title {
+    font-size: clamp(1.75rem, 6vw, 2.25rem);
+  }
+
+  .section__header--wide {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .archive__count {
+    margin-top: var(--space-2);
+  }
+
+  /* --- Hero --- */
+  .hero__intro {
+    font-size: var(--fs-base);
+  }
+
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero__actions .btn {
+    width: 100%;
+  }
+
+  .scroll-indicator {
+    align-self: center;
+  }
+
+  /* --- Origin --- */
+  .origin__profile {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-frame {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .origin__id {
+    min-width: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .origin__name {
+    font-size: var(--fs-lg);
+  }
+
+  /* --- Codex --- */
+  .codex {
+    grid-template-columns: 1fr;
+  }
+
+  /* --- Archive --- */
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-card__body {
+    padding: var(--space-4);
+  }
+
+  /* --- Transmission --- */
+  .contact-link {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .contact-link__value {
+    text-align: left;
+  }
+
+  .contact-form {
+    padding: var(--space-4);
+  }
+
+  .field input,
+  .field textarea {
+    font-size: 16px; /* prevent iOS zoom on focus */
+  }
+
+  /* --- Modal --- */
+  .modal__scroll {
+    padding:
+      var(--space-5)
+      max(var(--space-4), env(safe-area-inset-left, 0px))
+      calc(var(--mobile-nav-height) + var(--space-5))
+      max(var(--space-4), env(safe-area-inset-right, 0px));
+  }
+
+  .modal__title {
+    font-size: var(--fs-lg);
+  }
+
+  .modal__subtitle,
+  .modal__summary {
+    font-size: var(--fs-sm);
+  }
+
+  .modal__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal__actions .btn {
+    width: 100%;
+  }
+
+  /* --- Gallery --- */
+  .gallery__stage {
+    aspect-ratio: 4 / 3;
+  }
+
+  .gallery__nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .gallery__thumbs {
+    justify-content: center;
+  }
+
+  /* --- Mobile nav --- */
+  .mobile-nav__link {
+    font-size: 0.62rem;
+    min-height: 52px;
+  }
+
+  .mobile-nav__link svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ============================================================
+   5. LARGE PHONE (≤430px)
+   ------------------------------------------------------------
+   Tighter spacing, icons slightly smaller, hero type smaller.
+   ============================================================ */
+@media (max-width: 430px) {
+  :root {
+    --content-gutter: 18px;
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+
+  .hero__title-top {
+    font-size: 0.36em;
+    letter-spacing: 0.26em;
+  }
+
+  .hero__tagline {
+    font-size: var(--fs-md);
+  }
+
+  .emblem {
+    max-width: 220px;
+  }
+
+  .section__title {
+    font-size: clamp(1.6rem, 7vw, 2rem);
+  }
+
+  .codex__group {
+    padding: var(--space-4);
+  }
+
+  .archive__controls {
+    padding: var(--space-3);
+  }
+
+  .filter-chip {
+    font-size: 0.7rem;
+    padding: 5px 11px;
+  }
+
+  .gallery__thumb {
+    width: 56px;
+    height: 40px;
+  }
+
+  .mobile-nav__link {
+    font-size: 0.58rem;
+    padding: var(--space-1) 2px;
+  }
+
+  .mobile-nav__link svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ============================================================
+   6. SMALL PHONE (≤375px)
+   ============================================================ */
+@media (max-width: 375px) {
+  :root {
+    --content-gutter: 16px;
+    --mobile-nav-height: 62px;
+  }
+
+  .hero__title {
+    font-size: clamp(1.75rem, 9vw, 2.25rem);
+  }
+
+  .hero__eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+  }
+
+  .hero__intro {
+    font-size: var(--fs-sm);
+  }
+
+  .btn {
+    padding: 10px 18px;
+    font-size: var(--fs-sm);
+  }
+
+  .section__title {
+    font-size: clamp(1.4rem, 7.5vw, 1.75rem);
+  }
+
+  .project-card__title {
+    font-size: var(--fs-md);
+  }
+
+  .project-card__summary {
+    font-size: var(--fs-xs);
+  }
+
+  .modal__scroll {
+    padding:
+      var(--space-4)
+      max(var(--space-3), env(safe-area-inset-left, 0px))
+      calc(var(--mobile-nav-height) + var(--space-4))
+      max(var(--space-3), env(safe-area-inset-right, 0px));
+  }
+
+  .gallery__thumb {
+    width: 48px;
+    height: 36px;
+  }
+
+  .mobile-nav__link span {
+    font-size: 0.55rem;
+  }
+
+  .mobile-nav__link svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ============================================================
+   7. VERY SMALL PHONE (≤320px)
+   ------------------------------------------------------------
+   Absolute minimum sizes to keep everything legible and
+   tappable. Icons at 16px, labels at 0.52rem.
+   ============================================================ */
+@media (max-width: 320px) {
+  :root {
+    --content-gutter: 14px;
+    --mobile-nav-height: 58px;
+  }
+
+  .hero__title {
+    font-size: 1.6rem;
+  }
+
+  .hero__tagline {
+    font-size: var(--fs-base);
+  }
+
+  .section__title {
+    font-size: 1.3rem;
+  }
+
+  .section__eyebrow,
+  .section__lede {
+    font-size: var(--fs-xs);
+  }
+
+  .mobile-nav__link {
+    font-size: 0.52rem;
+    gap: 2px;
+  }
+
+  .mobile-nav__link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mobile-nav__list {
+    gap: 0;
+  }
+
+  .gallery__thumb {
+    width: 44px;
+    height: 32px;
+  }
+
+  .modal__title {
+    font-size: var(--fs-md);
+  }
+
+  .modal__scroll {
+    padding: var(--space-3);
+  }
+}
+
+/* ============================================================
+   8. LANDSCAPE PHONES (≤900px and short height)
+   ------------------------------------------------------------
+   Prevents the fixed bottom nav from eating too much vertical
+   space when the viewport is short and wide.
+   ============================================================ */
+@media (max-width: 900px) and (max-height: 480px) and (orientation: landscape) {
+  :root {
+    --mobile-nav-height: 52px;
+  }
+
+  .mobile-nav {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .mobile-nav__link {
+    min-height: 44px;
+    flex-direction: row;
+    gap: 6px;
+    padding: 4px var(--space-2);
+  }
+
+  .mobile-nav__link span {
+    font-size: 0.6rem;
+  }
+
+  .hero {
+    gap: var(--space-5);
+  }
+
+  .hero__emblem {
+    display: none;
+  }
+
+  .section--hero {
+    min-height: auto;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+}
+
+/* ============================================================
+   9. LARGE TOUCH / COARSE POINTER SAFEGUARDS
+   ------------------------------------------------------------
+   On touch devices, ensure interactive controls remain at
+   least 44–48px in their smaller dimension.
+   ============================================================ */
+@media (pointer: coarse) {
+  .nav-link,
+  .mobile-nav__link,
+  .filter-chip,
+  .btn,
+  .contact-link,
+  .gallery__thumb {
+    min-height: 44px;
+  }
+
+  .filter-chip {
+    padding: 8px 14px;
+  }
+
+  .gallery__thumb {
+    min-height: 44px;
+  }
+
+  .mobile-nav__link {
+    min-height: 52px;
+  }
+}
+
+/* ============================================================
+   10. OVERFLOW PREVENTION SAFEGUARDS
+   ------------------------------------------------------------
+   Belt-and-braces rules to guarantee no horizontal scroll on
+   any viewport, even with long unbroken strings in project
+   data or contact links.
+   ============================================================ */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.project-card__title,
+.project-card__subtitle,
+.contact-link__value,
+.modal__title,
+.modal__subtitle {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+/* Long technology tags wrap instead of overflowing the card. */
+.tag-list {
+  max-width: 100%;
+}
+
+.tag {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
